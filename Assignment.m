@@ -16,6 +16,9 @@ classdef Assignment < handle
             
             self.name = name;
             self.feedback = '';
+            self.codeScore = 0;
+            self.headerScore = 0;
+            self.commentScore = 0;
             
         end
         %--------------------------------------------

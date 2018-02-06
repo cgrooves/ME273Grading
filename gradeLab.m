@@ -1,7 +1,11 @@
 %% create templates
+% create master lab
 masterLab = Lab('Lab2');
 masterLab.submissionDate = datetime(2018,2,5,16,0,0);
+
 masterLab.assignments('SixDerivs') = Assignment('SixDerivs');
+masterLab.assignments('SixDerivs').file = 'SixDerivsGrader.m';
+
 masterLab.assignments('DerivPlot') = Assignment('DerivPlot');
 masterLab.assignments('FBC') = Assignment('FBC');
 
