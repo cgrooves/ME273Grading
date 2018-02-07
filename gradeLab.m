@@ -1,15 +1,19 @@
+clc; clear;
+
 %% create templates
 % create master lab
 masterLab = Lab('Lab2');
 masterLab.submissionDate = datetime(2018,1,17,16,0,0);
 
-masterLab.assignments('Animation') = Assignment('Animation');
+%masterLab.assignments('Animation') = Assignment('Animation');
 masterLab.assignments('Pythag') = Assignment('Pythag');
+
+numAssignments = size(masterLab.assignments,1);
 
 % grader files
 graderFunctions = containers.Map;
-graderFunction('Animation') = 'animationGrader.m';
-graderFunction('Pythag') = 'pythagGrader.m';
+%graderFunctions('Animation') = 'animationGrader.m';
+graderFunctions('Pythag') = 'pythagGrader.m';
 
 %%
 % prepare all folders/files
@@ -17,7 +21,7 @@ graderFunction('Pythag') = 'pythagGrader.m';
 assignmentFiles = containers.Map;
 
 for a = keys(masterLab.assignments)
-    assignmentFiles(a) = prepareFiles(a); % get all assignment files
+    assignmentFiles(a{1}) = prepareFiles(a{1}); % get all assignment files
 end
 
 % get/create student database
@@ -38,6 +42,11 @@ catch
     error('Lab responses must be in a file in the directory called ''labresponses.csv''');
 end
 
+% Initialize writeCell - the cell with all current feedback to be written
+% to file
+writeCell = {};
+cRow = 1;
+
 % Go through each lab submission
 for r = 1:size(labResponses,1)
    
@@ -45,8 +54,7 @@ for r = 1:size(labResponses,1)
     
     % find a match
     try
-%         last4 = labResponses{r,2}; % get last 4
-        s = students(labResponses{r,2}); % get Student from database that matches
+        s = students(labResponses{r,3}); % get Student from database that matches
         
         % try to match the lab
         try
@@ -72,26 +80,25 @@ for r = 1:size(labResponses,1)
             break;
         else
             % grade lab
-            lab.selfEvaluationScore = labResponses{r,5};
+            lab.selfEvaluationScore = labResponses{r,5}/5;
             lab.selfEvaluationFeedback = labResponses{r,6};
-            lab.peerObservationScore = labResponses{r,7};
+            lab.peerObservationScore = labResponses{r,7}/5;
             lab.peerObservationFeedback = labResponses{r,8};
             
             % get late weight
             lateWeight = getLateWeight(masterLab.submissionDate,lab.submissionDate,s.section);
             
             % allocate feedback
-            numAssignments = size(masterLab.assignments,1);
-            output = cell(1,11 + numAssignments*8);
+            output = cell(1,12 + numAssignments*8);
             
             % starting output index
-            n = 12;
+            n = 13;
             assignmentScores = 0;
             
             % grade each assignment in the master lab
             for a = keys(masterLab.assignments)
                 % get score and feedback
-                [assignmentScore, assignmentFeedback] = gradeAssignment(a,s,masterLab.name,graderFunctions(a),assignmentFiles(a));
+                [assignmentScore, assignmentFeedback] = gradeAssignment(a{1},s,masterLab.name,graderFunctions(a{1}),assignmentFiles(a{1}));
                 assignmentScores = assignmentScores + assignmentScore;
                 
                 % store assignment feedback
@@ -105,21 +112,66 @@ for r = 1:size(labResponses,1)
             % store all feedback
             output{1} = s.lastName;
             output{2} = s.firstName;
-            output{3} = s.last4;
-            output{4} = s.email;
-            output{5} = lab.name;
-            output{6} = lab.score;
-            output{7} = lateWeight;
-            output{8} = lab.selfEvaluationScore;
-            output{9} = lab.selfEvaluationFeedback;
-            output{10} = lab.peerObservationScore;
-            output{11} = lab.peerObservationFeedback;
+            output{3} = s.BYUID;
+            output{4} = s.last4;
+            output{5} = s.email;
+            output{6} = lab.name;
+            output{7} = lab.score;
+            output{8} = lateWeight;
+            output{9} = lab.selfEvaluationScore;
+            output{10} = lab.selfEvaluationFeedback;
+            output{11} = lab.peerObservationScore;
+            output{12} = lab.peerObservationFeedback;
             
+            % add output to writeCell
+            writeCell(cRow,:) = output;
+            cRow = cRow + 1;
             
+            lab.graded = true;
+                        
         end
         
     catch % if no student match is found
-       disp(strcat(num2str(labResponses{r,2}),' is not a recognized BYUID.'));
+       disp(strcat(num2str(labResponses{r,3}),' is not a recognized BYUID.'));
     end
     
 end
+
+% write the cell to table, table to file
+% write the table headers
+clear headers;
+%headers = cell(1,11 + numAssignments*8);
+headers{1} = 'LastName';
+headers{2} = 'FirstName';
+headers{3} = 'BYUID';
+headers{4} = 'Last4';
+headers{5} = 'Email';
+headers{6} = 'LabName';
+headers{7} = 'TotalLabScore';
+headers{8} = 'LateWeight';
+headers{9} = 'SelfEvaluationScore';
+headers{10} = 'SelfEvaluationFeedback';
+headers{11} = 'PeerObservationScore';
+headers{12} = 'PeerObservationFeedback';
+
+% Get all assignment feedback headers
+i = 13;
+for a = keys(masterLab.assignments)
+    headers{i} = strcat(a{1},'Assignment');
+    headers{i+1} = strcat(a{1},'Score');
+    headers{i+2} = strcat(a{1},'CodeScore');
+    headers{i+3} = strcat(a{1},'CodeFeedback');
+    headers{i+4} = strcat(a{1},'HeaderScore');
+    headers{i+5} = strcat(a{1},'HeadersFeedback');
+    headers{i+6} = strcat(a{1},'CommentScore');
+    headers{i+7} = strcat(a{1},'CommentFeedback');
+    
+    i = i + 8;
+end
+
+% turn cell into table
+tableOut = cell2table(writeCell,'VariableNames',headers);
+
+% write table out to .csv
+outFileName = strcat(masterLab.name,'graded',datestr(now),'.csv');% .csv name
+writetable(tableOut,outFileName);
