@@ -1,20 +1,23 @@
 %% create templates
 % create master lab
 masterLab = Lab('Lab2');
-masterLab.submissionDate = datetime(2018,2,5,16,0,0);
+masterLab.submissionDate = datetime(2018,1,17,16,0,0);
 
-masterLab.assignments('SixDerivs') = Assignment('SixDerivs');
-masterLab.assignments('SixDerivs').file = 'SixDerivsGrader.m';
+masterLab.assignments('Animation') = Assignment('Animation');
+masterLab.assignments('Pythag') = Assignment('Pythag');
 
-masterLab.assignments('DerivPlot') = Assignment('DerivPlot');
-masterLab.assignments('FBC') = Assignment('FBC');
+% grader files
+graderFunctions = containers.Map;
+graderFunction('Animation') = 'animationGrader.m';
+graderFunction('Pythag') = 'pythagGrader.m';
 
 %%
 % prepare all folders/files
 % for each assignment in the master lab
-i = 1;
+assignmentFiles = containers.Map;
+
 for a = keys(masterLab.assignments)
-    assignmentFiles{i} = prepareFiles(a); % get all assignment files
+    assignmentFiles(a) = prepareFiles(a); % get all assignment files
 end
 
 % get/create student database
@@ -26,6 +29,7 @@ catch
 end
 
     
+%%
 % load lab submissions
 try
     responses = readtable('labresponses.csv','Delimiter','\t');
@@ -69,13 +73,47 @@ for r = 1:size(labResponses,1)
         else
             % grade lab
             lab.selfEvaluationScore = labResponses{r,5};
-            lab.peerObservationScore = labResponses{r,4};
+            lab.selfEvaluationFeedback = labResponses{r,6};
+            lab.peerObservationScore = labResponses{r,7};
+            lab.peerObservationFeedback = labResponses{r,8};
             
             % get late weight
             lateWeight = getLateWeight(masterLab.submissionDate,lab.submissionDate,s.section);
             
-            % grade each assignment in the master lab
+            % allocate feedback
+            numAssignments = size(masterLab.assignments,1);
+            output = cell(1,11 + numAssignments*8);
             
+            % starting output index
+            n = 12;
+            assignmentScores = 0;
+            
+            % grade each assignment in the master lab
+            for a = keys(masterLab.assignments)
+                % get score and feedback
+                [assignmentScore, assignmentFeedback] = gradeAssignment(a,s,masterLab.name,graderFunctions(a),assignmentFiles(a));
+                assignmentScores = assignmentScores + assignmentScore;
+                
+                % store assignment feedback
+                output(n:n+7) = assignmentFeedback;
+                n = n + 8;
+            end
+            
+            % calculate overall lab score
+            lab.score = lateWeight*(0.8*assignmentScores + 0.1*(lab.selfEvaluationScore + lab.peerObservationScore));
+            
+            % store all feedback
+            output{1} = s.lastName;
+            output{2} = s.firstName;
+            output{3} = s.last4;
+            output{4} = s.email;
+            output{5} = lab.name;
+            output{6} = lab.score;
+            output{7} = lateWeight;
+            output{8} = lab.selfEvaluationScore;
+            output{9} = lab.selfEvaluationFeedback;
+            output{10} = lab.peerObservationScore;
+            output{11} = lab.peerObservationFeedback;
             
             
         end

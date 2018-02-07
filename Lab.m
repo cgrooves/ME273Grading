@@ -8,7 +8,9 @@ classdef Lab < handle
         score
         
         selfEvaluationScore
+        selfEvaluationFeedback
         peerObservationScore
+        peerObservationFeedback
         
         graded
     end

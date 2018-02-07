@@ -1,24 +1,25 @@
-function [score, fileFeedback] = graderTemplate(file)
+function [score, fileFeedback] = graderTemplate(filename)
 
     try
         % save state in case student runs "clear" in their function
-        filename = file.name;
         f = filename(1:end-2); % get function name
         save('gradingvars.mat');
 
-        % alter outputs and inputs
+        % alter outputs and inputs %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % EX: eval(['[output1, output2] = ',f,'(input1, input2);'])
         eval(['[score, fileFeedback] = ',f,'(file);']);
-
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         load('gradingvars.mat');
         
-        % grading algorithm - assign score here
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % grading algorithm - assign scores here and feedback here
         
         %
         %
         %
         
         % NORMALIZE THE SCORE (0 <= score <= 1)
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
     catch
         
