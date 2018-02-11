@@ -78,7 +78,8 @@ try                             % TRY structure used to catch errors
     while i <= length(content)      % loop through the lines of "contents"
 
         if length(content{i}) > 2   % check that this line has at least 3 characters
-            if header == 0 && strcmp(content{i}(1:3),'%--')  % if header indicator is 0 (OFF) and the line contains '%--', we are entering the header
+            % if header indicator is 0 (OFF) and the line contains '%--' or '% File', we are entering the header
+            if (header == 0 && contains(content{i},'% File','IgnoreCase',true)) || (header == 0 && contains(content{i},'%--'))
                 header = 1;                             % turn header indicator ON
                 headerows = headerows + 1;              % count header rows
 
@@ -87,7 +88,7 @@ try                             % TRY structure used to catch errors
                     i = i + 1;                          % increment
                     if length(content{i}) > 2           % check that the length of this line is at least 3 characters long
 
-                        if strcmp(content{i}(1:3),'%--')    % if we encounter a line containing '%--', we are leaving the header section
+                        if contains(content{i},'%--')    % if we encounter a line containing '%--', we are leaving the header section
                             header = 0;                     % set header indicator to 0 - OFF
                             i = i + 1;                      % increment i
                             break                           % bail out
@@ -109,7 +110,7 @@ try                             % TRY structure used to catch errors
                 commentlines = commentlines + 1;    % number of lines with comments
             end
 
-            if length(content{i}) > 3 & ~strcmp(content{i}(1),'%')     % count only lines of code with more than 3 characters and that don't start with a %
+            if length(content{i}) > 3 && ~strcmp(content{i}(1),'%')     % count only lines of code with more than 3 characters and that don't start with a %
                 codelines = codelines + 1;                             % increment the codelines variable 
             end
 
@@ -128,7 +129,7 @@ end
 if error == 0
     
     
-    HeaderScore = 0.75*headersum - 70;      % Equation for converting headersum to a score
+    HeaderScore = 0.75*headersum - 69;      % Equation for converting headersum to a score
     if HeaderScore > 100                    % adjust if it's above 100 or below 0
         HeaderScore = 100;
     elseif HeaderScore < 0 
