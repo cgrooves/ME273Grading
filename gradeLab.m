@@ -1,12 +1,16 @@
 clc; clear;
-delete('students.mat');
+
+addpath Core;
+
 % set grading routine type: resubmission or not?
 resubmitFlag = 0;
 
-%% create templates
+%% create templates SETUP DONE HERE
 % create master lab
 masterLab = Lab('Lab3');
-masterLab.submissionDate = datetime(2018,3,25,16,0,0);
+
+% set due date for lab
+masterLab.submissionDate = datetime(2018,3,25,16,0,0); 
 
 masterLab.assignments('SixDerivs') = Assignment('SixDerivs');
 %masterLab.assignments('DerivPlot') = Assignment('DerivPlot');
@@ -20,8 +24,7 @@ graderFunctions('SixDerivs') = 'sixDerivsGrader.m';
 %graderFunctions('DerivPlot') = 'derivPlotGrader.m';
 graderFunctions('FBC') = 'fbcGrader.m';
 
-%%
-
+%% LOAD FILES -- OPTIONAL SETUP HERE
 
 % get/create student database
 try
@@ -31,15 +34,17 @@ catch
     load('students.mat','students');
 end
 
-    
-%%
-% load lab submissions
+% load lab submissions - must be tab-delimited file saved as .csv (I know
+% it's weird, but commas in the student responses mess up actual .csv
+% files, but matlab can't read a .tsv file)
 try
     responses = readtable('labresponses.csv','Delimiter','\t');
     labResponses = table2cell(responses);
 catch
     error('Lab responses must be in a file in the directory called ''labresponses.csv''');
 end
+
+%% Grading routines
 
 % grade lab response submissions
 [studentIDErrors] = gradeLabResponses(students,masterLab,labResponses);
