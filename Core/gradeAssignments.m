@@ -61,7 +61,7 @@ for i = 1:length(assignmentFiles)
     end
     
     % assign code score and feedback
-    assignment.codeScore = ceil(codeScore);
+    assignment.codeScore = codeScore;
     assignment.codeFeedback = codeFeedback;
     
     % try grading the header and comments
@@ -70,9 +70,9 @@ for i = 1:length(assignmentFiles)
         [headerScore, headerFeedback, commentScore, commentFeedback, err] = ...
             HeaderCommentGrader_V1(assignmentFiles(i).name);
         
-        assignment.headerScore = ceil(headerScore);
+        assignment.headerScore = headerScore;
         assignment.headerFeedback = headerFeedback;
-        assignment.commentScore = ceil(commentScore);
+        assignment.commentScore = commentScore;
         assignment.commentFeedback = commentFeedback;
     catch
         line1 = 'You have formatted your headers or comments rather strangely, which has caused an autograder failure.';

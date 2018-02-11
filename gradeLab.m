@@ -5,7 +5,7 @@ addpath Core;
 % set grading routine type: resubmission or not?
 resubmitFlag = 0;
 
-%% create templates SETUP DONE HERE
+%% CREATE TEMPLATES ----------------------
 % create master lab
 masterLab = Lab('Lab3');
 
@@ -24,7 +24,7 @@ graderFunctions('SixDerivs') = 'sixDerivsGrader.m';
 %graderFunctions('DerivPlot') = 'derivPlotGrader.m';
 graderFunctions('FBC') = 'fbcGrader.m';
 
-%% LOAD FILES -- OPTIONAL SETUP HERE
+%% LOAD FILES -- ADVANCED SETUP HERE ----------------
 
 % get/create student database
 try

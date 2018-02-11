@@ -36,7 +36,7 @@ classdef Assignment < handle
         function calculateScore(self,resubmission)
             
             % 30 pts code, 5 pts comments, 5 pts header = 40 pts total
-            self.totalScore = ceil(.75*self.codeScore + 0.125*(self.headerScore + self.commentScore));
+            self.totalScore = (.75*self.codeScore + 0.125*(self.headerScore + self.commentScore));
             
             if resubmission
                 self.totalScore = self.totalScore * 0.8;

@@ -48,7 +48,7 @@ classdef Lab < handle
             
             % weight scores and add up
             self.score = 0.1*(self.selfEvaluationScore + self.peerObservationScore) + 0.8*(assignmentScore);
-            score = ceil(self.score); % round up
+            score = self.score; % round up
         end
         %------------------------------------------
     end
