@@ -14,7 +14,7 @@ function gradingFeedback() {
   
   
   // For each student
-  for (var i = 3; i < 4; i++)
+  for (var i = 1; i < data.length; i++)
   {
     var row = data[i];
     var lastName = row[0];
@@ -82,7 +82,7 @@ function gradingFeedback() {
     var subject = labName + ' grading';
     
     // send email
-    MailApp.sendEmail('caleb.j.groves@gmail.com', subject, text);
+    MailApp.sendEmail(email,subject, text);
   }
   
 }
