@@ -77,7 +77,7 @@ for i = 1:length(assignmentFiles)
     catch
         line1 = 'You have formatted your headers or comments rather strangely, which has caused an autograder failure.';
         line2 = ' Be sure to use the given header template, and make sure header is at the top (head).';
-        assignment.headerFeedback = strcat(assignment.headerFeedback,line1,line2);
+        assignment.headerFeedback = [line1, line2];
     end
     
     % calculate assignment grade and update student database

@@ -158,19 +158,18 @@ if error == 0
             HeaderFeedback = 'no feedback';
     end
     
-    switch CommentScore  
-        case CommentScore < 50
-            CommentFeedback = 'Minimal comments present';
-        case CommentScore >= 50 & CommentScore < 80
-            CommentFeedback = 'Marginal comments present';
-        case CommentScore >= 80 & CommentScore <90
-            CommentFeedback = 'Reasonable amount comments present';
-        case CommentScore >=90 & CommentScore < 100
-            CommentFeedback = 'Good amount of comments present';
-        case CommentScore >=100
-            CommentFeedback = 'Good commenting!';
-        otherwise
-            CommentFeedback = 'no feedback';
+    if (CommentScore < 50)
+        CommentFeedback = 'Minimal comments present';
+    elseif (CommentScore >= 50 && CommentScore < 80)
+        CommentFeedback = 'Marginal comments present';
+    elseif (CommentScore >= 80 && CommentScore <90)
+        CommentFeedback = 'Reasonable amount comments present';
+    elseif (CommentScore >=90 && CommentScore < 100)
+        CommentFeedback = 'Good amount of comments present';
+    elseif (CommentScore >=100)
+        CommentFeedback = 'Good commenting!';
+    else
+        CommentFeedback = 'no feedback';
     end
     
     CommentScore = CommentScore/100;

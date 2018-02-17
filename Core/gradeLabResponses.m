@@ -37,21 +37,33 @@ for r = 1:size(labResponses,1)
     
     timestamp = labResponses{r,1}; % get responses timestamp
     
+    % We only ever want to grade the first submission, but just in case
+    % we'll only take the highest peer observation/self evaluation scores
     % if this submission is newer
-    if timestamp > lab.submissionDate
-        % re-grade lab
+    
+    if timestamp > lab.submissionDate % update submission time
         lab.submissionDate = timestamp;
-        
-        % grade lab
-        [lab.selfEvaluationScore, lab.selfEvaluationFeedback] = ...
-            responseScoreGrader(labResponses{r,4});
-
-        [lab.peerObservationScore, lab.peerObservationFeedback] = ...
-            responseScoreGrader(labResponses{r,6});
-
-    else
-        continue;
     end
+        
+    % grade lab
+    [newSelfEvaluationScore, newSelfEvaluationFeedback] = ...
+        responseScoreGrader(labResponses{r,4});
+
+    [newPeerObservationScore, newPeerObservationFeedback] = ...
+        responseScoreGrader(labResponses{r,6});
+
+    % only record highest response
+    if newSelfEvaluationScore > lab.selfEvaluationScore
+        lab.selfEvaluationScore = newSelfEvaluationScore;
+        lab.selfEvaluationFeedback = newSelfEvaluationFeedback;
+    end
+
+    if newPeerObservationScore > lab.peerObservationScore
+        lab.peerObservationScore = newPeerObservationScore;
+        lab.peerObservationFeedback = newPeerObservationFeedback;
+    end
+
+
 end
 
 end

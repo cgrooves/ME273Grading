@@ -76,7 +76,7 @@ function gradingFeedback() {
     var line7 = '**************Assignment Breakdown*****************\n';
     var line8 = assignmentBreakdown;
     
-    var ending = '**If you have any questions on your grade, please contact one of the TA\'s during office hours.';    
+    var ending = '**If you have any questions on your assignment grade, please contact Caleb Groves at caleb.j.groves@gmail.com.';    
     
     var text = opener + intro + line1 + line2 + line3 + line4 + line5 + line6 + line7 + line8 + ending;
     var subject = labName + ' grading';

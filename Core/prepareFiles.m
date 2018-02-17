@@ -26,7 +26,7 @@ addpath(newPath.name);
 files = dir(fullfile(newPath.name,'*.m'));
 
 % remove all files that don't match students, outside appropriate date
-% range, or are newer than the student's current submission for this
+% range, or are older than the student's current submission for this
 % assignment
 filterFilesRange(files,students,labName,assignmentName,dueDate,resubmissionFlag);
 
