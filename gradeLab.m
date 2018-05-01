@@ -1,3 +1,5 @@
+restoredefaultpath;
+
 clc; clear;
 
 addpath Core;
@@ -7,12 +9,13 @@ resubmitFlag = 0;
 
 %% CREATE TEMPLATES ----------------------
 % create master lab
-masterLab = Lab('Lab3');
+masterLab = Lab('Lab7');
 
-% set due date for lab
-masterLab.submissionDate = datetime(2018,3,25,16,0,0); 
+% set due date for lab % lookup matlab 'datetime'
+masterLab.submissionDate = datetime(2018,2,27,16,0,0); 
 
-masterLab.assignments('SixDerivs') = Assignment('SixDerivs');
+% define the assignments
+masterLab.assignments('') = Assignment('SixDerivs');
 %masterLab.assignments('DerivPlot') = Assignment('DerivPlot');
 masterLab.assignments('FBC') = Assignment('FBC');
 

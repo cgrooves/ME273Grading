@@ -85,6 +85,7 @@ for i = 1:length(assignmentFiles)
     assignment.name = assignmentName;
       
     assignment.calculateScore(resubmissionFlag);
+    
 
 end
     
