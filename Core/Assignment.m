@@ -39,7 +39,11 @@ classdef Assignment < handle
             self.totalScore = (.75*self.codeScore + 0.125*(self.headerScore + self.commentScore));
             
             if resubmission
-                self.totalScore = self.totalScore * 0.8;
+                
+                if self.totalScore > .8
+                    self.totalScore = .8;
+                end
+                
                 self.totalFeedback = 'This grade reflects a 20% penalty for this assignment being resubmitted';
             else
                 self.totalFeedback = 'This assignment was submitted on time';
